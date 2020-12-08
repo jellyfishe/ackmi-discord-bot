@@ -2,7 +2,7 @@ package jellyfishe.beachbot.app
 
 import ackcord._
 import ackcord.commands.PrefixParser
-import ackcord.gaateway.GatewayIntents
+import ackcord.gateway.GatewayIntents
 import ackcord.syntax._
 
 import ackcord.commands._

@@ -8,8 +8,8 @@ import ackcord.syntax._
 import ackcord.commands._
 import ackcord.data.{GuildId, Permission}
 import ackcord.requests.{CreateMessage, Request}
-import ackcord.NotUsed
 
+import akka.NotUsed
 import akka.stream.scaladsl.{Flow, Sink}
 
 
