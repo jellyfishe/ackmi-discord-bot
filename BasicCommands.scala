@@ -16,7 +16,7 @@ import akka.stream.scaladsl.{Flow, Sink}
 class BasicCommands(client: DiscordClient, requests: Requests) extends CommandController(requests) {
 
     // High Level Command API
-    
+
     val greetings: NamedCommand[NotUsed] = 
         Command
             .named(Seq("m!"), Seq("hello")) // (symbol, alias) function turns this into a builder.
@@ -42,6 +42,7 @@ class BasicCommands(client: DiscordClient, requests: Requests) extends CommandCo
       (c, m) => m.guild(c).fold(Future.successful(false))(g => needMentionInGuild(g.id)),
       (c, m) => m.guild(c).fold(Future.successful(Seq("m!")))(g => prefixSymbolsInGuild(g.id)),
       (_, _) => Future.successful(aliases)
+    )
 
     val ping: NamedDescribedCommand[NotUsed] =
         Command
