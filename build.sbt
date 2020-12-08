@@ -1,3 +1,9 @@
+name := "ackmiBot"
+
+version := "0.1"
+
+scalaVersion := "2.13.4"
+
 resolvers += Resolver.JCenterRepository
 libraryDependencies += "net.katsstuff" %% "ackcord"                 % "0.17.1" //For high level API, includes all the other modules
 libraryDependencies += "net.katsstuff" %% "ackcord-core"            % "0.17.1" //Low level core API
