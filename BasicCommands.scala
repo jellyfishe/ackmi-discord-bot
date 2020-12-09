@@ -21,11 +21,10 @@ class BasicCommands(client: DiscordClient, requests: Requests) extends CommandCo
 
     val greetings: NamedDescribedCommand[NotUsed] = 
         Command
-            .named(Seq("m!"), Seq("hello")) // (symbol, alias) function turns this into a builder.
+            .named(Seq("m!"), Seq("hello")) // (prefix, command_name) function turns this into a builder.
             .described("Hello", "Say hello") // (title, description)
             .withRequest(m => m.textChannel.sendMessage(s"Hello ${m.user.username}")) // m = message
 
-    // Low Level Command API
 
     val shouldMentionMap = new TrieMap[GuildId, Boolean]
     val prefixSymbolsMap = new TrieMap[GuildId, Seq[String]]

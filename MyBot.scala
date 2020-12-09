@@ -5,10 +5,10 @@ import ackcord.commands.PrefixParser
 import ackcord.gateway.GatewayIntents
 import ackcord.syntax._
 
-import ackcord.commands._
-import akka.NotUsed
-
 object BeachBot extends App {
+
+    println("Starting bot up...")
+
     val GeneralCommands = "!"
 
     val token = sys.env("BOT_TOKEN")
@@ -20,6 +20,8 @@ object BeachBot extends App {
             client.onEventSideEffectsIgnore {
                 case APIMessage.Ready(_) => println("Ready to rock and roll.")
             }
+
+            import client.requestsHelper._
 
             val myCommands      = new BasicCommands(client, client.requests)
             val myHelpCommand   = new MyHelpCommand(client.requests)
