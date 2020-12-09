@@ -9,6 +9,8 @@ import ackcord.commands._
 import ackcord.data.{GuildId, Permission}
 import ackcord.requests.{CreateMessage, Request}
 
+import cats.syntax.all._
+
 import akka.NotUsed
 import akka.stream.scaladsl.{Flow, Sink}
 
@@ -17,7 +19,7 @@ class BasicCommands(client: DiscordClient, requests: Requests) extends CommandCo
 
     // High Level Command API
 
-    val greetings: NamedCommand[NotUsed] = 
+    val greetings: NamedDescribedCommand[NotUsed] = 
         Command
             .named(Seq("m!"), Seq("hello")) // (symbol, alias) function turns this into a builder.
             .described("Hello", "Say hello") // (title, description)
