@@ -1,1 +1,1 @@
-worker: java -jar target/scala-2.13/ackmibot_2.13-0.1.jar
+worker: java -jar target/scala-2.13/ackmiBot-assembly-0.1.jar

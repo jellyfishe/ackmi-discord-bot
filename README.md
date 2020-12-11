@@ -3,4 +3,7 @@
 
 Discord Bot written in Scala with music, and other features...
 
+## Heroku
+Turn into fat jar w/ `build.sbt` and `project/plugins.sbt`. Then `sbt assembly deployHeroku`.
+
 
