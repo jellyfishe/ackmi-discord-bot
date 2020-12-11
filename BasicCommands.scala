@@ -14,6 +14,10 @@ import cats.syntax.all._
 import akka.NotUsed
 import akka.stream.scaladsl.{Flow, Sink}
 
+import com.sedmelluq.discord.lavaplayer.player.{AudioPlayerManager, DefaultAudioPlayerManager}
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
+import com.sedmelluq.discord.lavaplayer.track.{AudioPlaylist, AudioTrack}
+
 
 class BasicCommands(client: DiscordClient, requests: Requests) extends CommandController(requests) {
 
@@ -21,7 +25,7 @@ class BasicCommands(client: DiscordClient, requests: Requests) extends CommandCo
 
     val greetings: NamedDescribedCommand[NotUsed] = 
         Command
-            .named(Seq("m!"), Seq("hello")) // (prefix, command_name) function turns this into a builder.
+            .named(Seq("!"), Seq("hello")) // (prefix, command_name) function turns this into a builder.
             .described("Hello", "Say hello") // (title, description)
             .withRequest(m => m.textChannel.sendMessage(s"Hello ${m.user.username}")) // m = message
 
@@ -41,7 +45,7 @@ class BasicCommands(client: DiscordClient, requests: Requests) extends CommandCo
     def dynamicPrefix(aliases: String*): StructuredPrefixParser =
     PrefixParser.structuredAsync(
       (c, m) => m.guild(c).fold(Future.successful(false))(g => needMentionInGuild(g.id)),
-      (c, m) => m.guild(c).fold(Future.successful(Seq("m!")))(g => prefixSymbolsInGuild(g.id)),
+      (c, m) => m.guild(c).fold(Future.successful(Seq("!")))(g => prefixSymbolsInGuild(g.id)),
       (_, _) => Future.successful(aliases)
     )
 
@@ -55,6 +59,29 @@ class BasicCommands(client: DiscordClient, requests: Requests) extends CommandCo
                     .to(requests.sinkIgnore)
             }
 
-    
+    val playerManager: AudioPlayerManager = new DefaultAudioPlayerManager
+        AudioSourceManagers.registerRemoteSources(playerManager)
+
+    val queue: NamedCommand[String] =
+        GuildVoiceCommand.namedParser(dynamicPrefix("queue", "q")).parsing[String].streamed { r =>
+        val guildId     = r.guild.id
+        val url         = r.parsed
+        val loadItem    = client.loadTrack(playerManager, url)
+        val joinChannel = client.joinChannel(guildId, r.voiceChannel.id, playerManager.createPlayer())
+
+        loadItem.zip(joinChannel).map {
+            case (track: AudioTrack, player) =>
+                player.startTrack(track, true)
+                client.setPlaying(guildId, playing = true)
+            case (playlist: AudioPlaylist, player) =>
+                if (playlist.getSelectedTrack != null) {
+                player.startTrack(playlist.getSelectedTrack, false)
+            } else {
+                player.startTrack(playlist.getTracks.get(0), false)
+            }
+            client.setPlaying(guildId, playing = true)
+            case _ => sys.error("Unknown audio item")
+      }
+    }
 
 }
