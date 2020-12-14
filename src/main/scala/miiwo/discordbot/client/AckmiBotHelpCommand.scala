@@ -7,7 +7,7 @@ import ackcord.data.{EmbedField, Message, OutgoingEmbed, OutgoingEmbedFooter}
 import ackcord.requests.CreateMessageData
 import ackcord.{CacheSnapshot, Requests}
 
-class MyHelpCommand(requests: Requests) extends HelpCommand(requests) {
+class AckmiBotHelpCommand(requests: Requests) extends HelpCommand(requests) {
     override def createSearchReply(message: Message, query: String, matches: Seq[HelpCommand.HelpCommandProcessedEntry])(
         implicit c: CacheSnapshot
     ): Future[CreateMessageData] = Future.successful(
