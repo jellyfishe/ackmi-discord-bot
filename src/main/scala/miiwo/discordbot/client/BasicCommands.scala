@@ -12,10 +12,6 @@ import ackcord.requests.{CreateMessage, Request}
 import akka.NotUsed
 import akka.stream.scaladsl.{Flow}
 
-import com.sedmelluq.discord.lavaplayer.player.{AudioPlayerManager, DefaultAudioPlayerManager}
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
-import com.sedmelluq.discord.lavaplayer.track.{AudioPlaylist, AudioTrack}
-
 
 class BasicCommands(client: DiscordClient, requests: Requests) extends CommandController(requests) {
 
@@ -56,32 +52,5 @@ class BasicCommands(client: DiscordClient, requests: Requests) extends CommandCo
                     .map(m => CreateMessage.mkContent(m.message.channelId, "Pong"))
                     .to(requests.sinkIgnore)
             }
-
-    val playerManager: AudioPlayerManager = new DefaultAudioPlayerManager
-        AudioSourceManagers.registerRemoteSources(playerManager)
-
-    val queue: NamedDescribedCommand[String] =
-        GuildVoiceCommand.namedParser(dynamicPrefix("queue", "q"))
-        .described("Queue", "MusicPlaying")
-        .parsing[String].streamed { r =>
-            val guildId     = r.guild.id
-            val url         = r.parsed
-            val loadItem    = client.loadTrack(playerManager, url)
-            val joinChannel = client.joinChannel(guildId, r.voiceChannel.id, playerManager.createPlayer())
-
-            loadItem.zip(joinChannel).map {
-                case (track: AudioTrack, player) =>
-                    player.startTrack(track, true)
-                    client.setPlaying(guildId, playing = true)
-                case (playlist: AudioPlaylist, player) =>
-                    if (playlist.getSelectedTrack != null) {
-                    player.startTrack(playlist.getSelectedTrack, false)
-                } else {
-                    player.startTrack(playlist.getTracks.get(0), false)
-                }
-                client.setPlaying(guildId, playing = true)
-                case _ => sys.error("Unknown audio item")
-            }
-        }
 
 }

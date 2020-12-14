@@ -1,5 +1,3 @@
-lazy val ackcordVersion = "0.17.1"
-
 lazy val commonSettings = Seq(
     organization := "com.github.miiwo",
     scalaVersion := "2.13.4",
@@ -21,11 +19,9 @@ lazy val ackcordSettings = Seq(
   resolvers += Resolver.JCenterRepository,
   libraryDependencies ++= Seq(
     "ch.qos.logback" % "logback-classic"         % "1.2.3",
-    "net.katsstuff" %% "ackcord"                 % ackcordVersion, //For high level API, includes all the other modules
-    "net.katsstuff" %% "ackcord-core"            % ackcordVersion, //Low level core API
-    "net.katsstuff" %% "ackcord-commands"        % ackcordVersion, //Low to mid level Commands API
-    "net.katsstuff" %% "ackcord-lavaplayer-core" % ackcordVersion, //Low level lavaplayer API
-  )
+    "net.katsstuff" %% "ackcord"                 % "0.17.1", //For high level API, includes all the other modules (core, commands, lavaplayer)
+  ),
+  dependencyOverrides += "com.sedmelluq" % "lavaplayer" % "1.3.63",
 )
 
 lazy val client = (project in file("."))
@@ -35,7 +31,7 @@ lazy val client = (project in file("."))
   .settings(
     name := "ackmiBot",
     version := "0.1",
-    assemblyMergeStrategy in assembly := {
+    assemblyMergeStrategy in assembly := { // This was possibly needed because I was being baka about library dependencies
       case "module-info.class" => MergeStrategy.discard
       case x =>
         val oldStrategy = (assemblyMergeStrategy in assembly).value

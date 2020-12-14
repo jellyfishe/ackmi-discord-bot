@@ -20,13 +20,14 @@ object BeachBot extends App {
                 case APIMessage.Ready(_) => println("Ready to rock and roll.")
             }
 
-            val myCommands      = new BasicCommands(client, client.requests)
-            val myHelpCommand   = new MyHelpCommand(client.requests)
+            val myCommands = new BasicCommands(client, client.requests)
+            val myMusicCommands = new MusicCommands(client, client.requests)
+            val myHelpCommand = new AckmiBotHelpCommand(client.requests)
 
             // High Level API command.
             // Registers a command using the prefix given
             client.commands.runNewCommand(
-                PrefixParser.structured(needsMention = false, Seq("!"), Seq("help")), 
+                PrefixParser.structured(needsMention=false, Seq("!"), Seq("help")), 
                 myHelpCommand.command
             )
 
@@ -34,7 +35,7 @@ object BeachBot extends App {
                 myHelpCommand,
                 myCommands.greetings,
                 myCommands.ping,
-                myCommands.queue
+                myMusicCommands.queue
             )
 
             client.login()
